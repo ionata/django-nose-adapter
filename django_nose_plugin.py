@@ -30,6 +30,9 @@ class DjangoNosePlugin(Plugin):
             self.plugin.configure(*args, **kw_args)
 
     def prepareTest(self, test):
+        import django
+        if hasattr(django, 'setup'):
+            django.setup()
         self.plugin.prepareTest(test)
 
     def finalize(self, result):
