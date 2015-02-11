@@ -10,6 +10,7 @@ class DjangoNosePlugin(Plugin):
 
     name = 'djangonose'
     enabled = False
+    django_setup_run = False
 
     @property
     def plugin(self):
@@ -29,10 +30,14 @@ class DjangoNosePlugin(Plugin):
         if self.enabled:
             self.plugin.configure(*args, **kw_args)
 
+    def begin(self):
+        if not self.django_setup_run:
+            import django
+            if hasattr(django, 'setup'):
+                django.setup()
+                self.django_setup_run = True
+
     def prepareTest(self, test):
-        import django
-        if hasattr(django, 'setup'):
-            django.setup()
         self.plugin.prepareTest(test)
 
     def finalize(self, result):
